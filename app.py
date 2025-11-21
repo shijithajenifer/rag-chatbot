@@ -1,4 +1,3 @@
-# app.py
 import streamlit as st
 from sentence_transformers import SentenceTransformer
 import faiss
@@ -6,18 +5,12 @@ import pdfplumber
 import numpy as np
 import os
 
-# -----------------------------
-# 1️⃣ Streamlit UI Setup
-# -----------------------------
 st.set_page_config(page_title="IT Helpdesk Chatbot")
 st.title("💻 IT Helpdesk Chatbot")
 user_query = st.text_input("Ask a question about IT issues:")
 
-# -----------------------------
-# 2️⃣ Load PDF Content
-# -----------------------------
 data_folder = "data"
-pdf_files = ["IT HELP DESK.pdf"]  # using only one PDF
+pdf_files = ["IT HELP DESK.pdf"] 
 
 
 def load_pdfs(pdf_list, folder):
@@ -33,9 +26,6 @@ def load_pdfs(pdf_list, folder):
 
 pdf_texts = load_pdfs(pdf_files, data_folder)
 
-# -----------------------------
-# 3️⃣ Split Text into Chunks
-# -----------------------------
 def split_text(text, chunk_size=500, overlap=50):
     chunks = []
     start = 0
@@ -49,22 +39,15 @@ all_chunks = []
 for text in pdf_texts:
     all_chunks.extend(split_text(text))
 
-# -----------------------------
-# 4️⃣ Local Embeddings Setup
-# -----------------------------
 model = SentenceTransformer('all-MiniLM-L6-v2')
 embeddings = model.encode(all_chunks, convert_to_numpy=True)
 
-# -----------------------------
-# 5️⃣ Build FAISS Index
-# -----------------------------
+
 dimension = embeddings.shape[1]
 index = faiss.IndexFlatL2(dimension)
 index.add(embeddings)
 
-# -----------------------------
-# 6️⃣ Query Vector Store
-# -----------------------------
+
 def search(query, k=3):
     query_vec = model.encode([query], convert_to_numpy=True)
     distances, indices = index.search(query_vec, k)
