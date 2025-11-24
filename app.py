@@ -59,3 +59,4 @@ if user_query:
     st.write("**Top Relevant Answers:**")
     for i, res in enumerate(results, 1):
         st.markdown(f"**{i}.** {res}")
+        
